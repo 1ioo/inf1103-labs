@@ -13,7 +13,7 @@ def calculate_tax(amount):
 
 def process_delivery(current_total, new_value):
     delivery_fee = 5
-    current_total += new_value * delivery_fee + calculate_tax(delivery_fee)
+    current_total += new_value * delivery_fee + calculate_tax(new_value * delivery_fee)
     return current_total
 
 def generate_report(total_units, failed_attempts, delivery_total):
