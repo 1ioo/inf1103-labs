@@ -1,19 +1,37 @@
+import json
+
 def load_inventory():
+    print("=" * 30)
+    print("INVENTORY MANAGEMENT SYSTEM")
+    print("=" * 30 + "\n")
     try:
-        with open("inventory.txt", mode="r") as file:
-            orders = []
-            for line in file.readlines():
-                line = line.strip("\n")
-                orders.append(line.split(",")) # [id, name, inventory_amount]
-            return orders
-    except FileNotFoundError:
-        with open("inventory.txt", mode="w") as file:
-            return []
+        with open("inventory.json", mode="a+") as file: # a+ opens the file for appending and reading but creates it if it doesn't exist
+            file.seek(0) # put file pointer to start of file for reading
+            inventory = json.load(file)
+            print("inventory.json found.")
+            print("Inventory loaded successfully.\n")
+    except json.decoder.JSONDecodeError:
+        inventory = []
+        print("File was not found or File is empty.")
+        print("Empty inventory loaded.\n")
     except Exception as e:
         print(f"Error loading inventory: {e}")
-        return []
+        print("Empty inventory loaded.\n")
+        inventory = []
+    return inventory
 
-def display_inventory(inventory): #inventory = [[id,name,inventory],[id,name,inventory]]
+def print_menu():
+    print("-" * 10 + " MENU " + "-" * 10)
+    print("1. Display All Products")
+    print("2. Add Product")
+    print("3. Update Stock")
+    print("4. Search Product")
+    print("5. Save Inventory")
+    print("6. Exit")
+    print("-" * 25 + "\n")
+    
+
+def display_inventory(inventory): # inventory = [[id,name,inventory],[id,name,inventory]]
     msg = "Current Orders:\n"
     if inventory:
         for order in inventory:
