@@ -29,105 +29,117 @@ def print_menu():
     print("5. Save Inventory")
     print("6. Exit")
     print("-" * 25 + "\n")
-    
 
-def display_inventory(inventory): # inventory = [[id,name,inventory],[id,name,inventory]]
-    msg = "Current Orders:\n"
+def display_all(inventory):
+    print("\nCurrent Inventory")
+    print("-" * 70)
     if inventory:
-        for order in inventory:
-            line = ""
-            for item in order:
-                line += item + ", "
-            line = line[:-2] + "\n" #:-2 clears out the extra ", " and replaces it with \n
-            msg += line
-        return msg
+        for product in inventory:
+            print(f"ID: {product['product_id']} | Name: {product['product_name']} | Price: ${product['product_price']:.2f} | Stock: {product['current_stock']}")
     else:
-        msg += "\t(no previous orders found)"
-        return msg
+        print("No Products in Inventory.")
+    print("-" * 70)
+    
+def add_product(inventory):
+    print("\nAdd New Product")
+    try:
+        product_id = str(input("Product ID: "))
+        product_name = str(input("Product Name: "))
+        product_price = float(input("Price: "))
+        current_stock = int(input("Stock Quantity: "))
+        
+        new_product = {"product_id" : product_id,
+                        "product_name" : product_name,
+                        "product_price" : product_price,
+                        "current_stock" : current_stock
+                       }
 
-def get_current_total_inventory(inventory): #inventory = [[id,name,inventory],[id,name,inventory]]
-    total = 0
-    if inventory: # If inventory is not empty
-        for item in inventory:
-            total += int(item[-1])
-    return total
-
-def get_valid_input():
-    product_name = input("Enter Product Name (or 'quit' to exit): ")
-    if product_name.strip() and product_name.lower() != "quit": # If product_name is not empty and != quit
-        stock_quantity = input("Enter Stock Quantity: ")
-        if stock_quantity.isdigit() and int(stock_quantity) > 0:
-            return [str(product_name), int(stock_quantity)]
-        else:
-            return False
-    elif product_name.lower() == "quit":
-        return "quit"
+        inventory.append(new_product)
+        print("\nProduct added successfully!\n")
+    except Exception as e:
+        print(f"Error Adding Product: {e}")
+    
+def update_stock(inventory):
+    print("\nUpdate Stock")
+    product_id = str(input("Enter Product ID: "))
+    for product in inventory:
+        if product["product_id"] == product_id:
+            print("\nProduct Found:")
+            print("Name:", product["product_name"])
+            print("Current Stock:", product["current_stock"], "\n")
+            try:
+                new_stock_quantity = int(input("New Stock Quantity: "))
+                if new_stock_quantity >= 0:
+                    product["current_stock"] = new_stock_quantity
+                    print("\nStock updated successfully!\n")
+                else:
+                    raise ValueError
+            except ValueError:
+                print("Please enter a Positive Integer.\n")
+            break
+            
+    else: # for...else will execute if for loop doesn't meet break
+        print("Product Not Found.\n")
+        
+def search_product(inventory):
+    print("\nSearch Product")
+    product_id = str(input("Enter Product ID: "))
+    for product in inventory:
+        if product["product_id"] == product_id:
+            print("\nProduct Found")
+            print("-" * 70)
+            print("ID:", product["product_id"])
+            print("Name:", product["product_name"])
+            print(f"Price: ${product['product_price']:.2f}")
+            print("Stock:", product["current_stock"])
+            print("-" * 70 + "\n")
+            break
     else:
+        print("\nProduct not found.\n")
+        
+def save_inventory(inventory):
+    try:
+        with open("inventory.json", mode="w") as file:
+            json.dump(inventory, file, indent=4)
+        return True
+    except Exception as e:
+        print(f"Error saving file: {e}")
         return False
 
-def add_to_inventory(inventory, order):
-    # inventory = [[id,name,inventory],[id,name,inventory]]
-    # order = [product_name, stock_quantity]
-    
-    new_id = len(inventory) + 1001
-    order.insert(0, int(new_id)) # new order = [id, product_name, stock_quantity]
-    inventory.append(order)
-    msg = ""
-    for fields in order:
-        msg += str(fields) + ","
-    msg = msg.strip(",") # strip the last ","
-    print("New Order Added:")
-    print(msg)
-    print(f"Tax: ${calculate_tax(order[-1]):,.2f} | Total Inventory: {order[-1]}\n")
-    return True
-
-def save_inventory(inventory): # inventory = [[id,name,inventory],[id,name,inventory]]
-    msg =""
-    for order in inventory:
-        for fields in order:
-            msg += str(fields) + ","
-        msg = msg[:-1]  + "\n" # remove final "," and replace with "\n"
-    with open("inventory.txt", mode="w") as file:
-        file.write(msg)
-    print("Order successfully saved to inventory.txt")
-                
-
-def calculate_tax(amount):
-    amount *= 0.1
-    return amount
-
-def process_delivery(stock_quantity):
-    delivery_fee = 5
-    total_cost = stock_quantity * delivery_fee + calculate_tax(stock_quantity * delivery_fee)
-    return total_cost
-
-def generate_report(transactions_recorded, total_units_processed, failed_attempts, delivery_total):
-    print("\n=== Audit Report ===")
-    print("Total Transactions Recorded:", transactions_recorded)
-    print("Total Units Processed:", total_units_processed)
-    print("Number of Failed/Rejected Entries:", failed_attempts)
-    print(f"Total Delivery Fee: ${delivery_total:,.2f}")
-
 inventory = load_inventory()
-print(display_inventory(inventory))
+print_menu()
 
-failed_entries = 0
-
-while get_current_total_inventory(inventory) <= 500:
-    user_input = get_valid_input()
-    if user_input == "quit":
-        save_inventory(inventory)
-        current_total_inventory = get_current_total_inventory(inventory)
-        generate_report(len(inventory), current_total_inventory, failed_entries, process_delivery(current_total_inventory))
-        break
-    elif user_input:
-        if add_to_inventory(inventory, user_input):
-            print("Order successfully saved.\n")
-        else:
-            print("Error occured saving entry, please re-enter.")
-            failed_entries += 1
+while True:
+    option = input("Enter Option: ")
+    if option.isdigit() and 1 <= int(option) <= 6:
+        option = int(option)
+        if option == 1:
+            display_all(inventory)
+        elif option == 2:
+            add_product(inventory)
+        elif option == 3:
+            update_stock(inventory)
+        elif option == 4:
+            search_product(inventory)
+        elif option == 5:
+            if save_inventory(inventory):
+                print("\nSaving inventory...")
+                print("Inventory saved successfully to inventory.json.\n")
+            else:
+                print("Error Saving Inventory. Please Try Again")
+        elif option == 6:
+            if save_inventory(inventory):
+                print("\nSaving inventory before exit...")
+                print("Inventory saved successfully.\n")
+                print("Thank you for using Inventory Management System.")
+                print("Program terminated.")
+                break
+            else:
+                print("Error Saving Inventory.")
+                exit_without_save = input("Exit Without Saving? (Yes/No): ")
+                if exit_without_save.lower() == "yes":
+                    break
+                
     else:
-        print("Error: Please Enter a Positive Integer.")
-        failed_entries += 1
-else:
-    print("Inventory has Exceeded 500 Units!")
+        print("Invalid option. Enter a number from 1 to 6.\n")
+        
