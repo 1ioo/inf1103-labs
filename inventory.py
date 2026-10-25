@@ -85,4 +85,30 @@ class Inventory:
     
     
 class Menu():
-    
+    # Display Main Menu
+    def display_menu():
+        print("-" * 10 + " MENU " + "-" * 10)
+        print("1. Display All Products")
+        print("2. Add Product")
+        print("3. Update Stock")
+        print("4. Search Product")
+        print("5. Save Inventory")
+        print("6. Exit")
+        print("-" * 25 + "\n")
+        
+    # Get User Input
+    def get_user_input(convert_type, prompt):
+        try:
+            user_input = convert_type(input(prompt)) # Type Conversion
+            # Input Validation
+            if convert_type == str:
+                if not user_input.strip():
+                    raise ValueError("Field cannot be Empty.")
+            elif convert_type in (int, float):
+                if user_input < 0:
+                    raise ValueError("Enter a Non-Negative Number.")
+            
+            return user_input
+        except ValueError as e:
+            print(f"Error: {e}")
+            
