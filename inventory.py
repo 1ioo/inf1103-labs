@@ -6,25 +6,83 @@ class Product:
         self.__price = price
         self.__stock = stock
     
+    # Getter Method for Product ID Field
+    @property
+    def product_id(self):
+        return self.__product_id
+    
     # Updates Product's Stock Quantity
-    def update_stock(self, quantity: int) -> None:
+    def update_stock(self, quantity: int):
         if quantity.isdigit(): # isdigit checks for negative numbers as well.
             self.__stock = quantity
+            print("Stock Quantity Updated.")
         else:
             print("Error: Enter a Positive Integer.")
     
-    def display_information(self) -> None:
-        pass
+    # Displays Product Summary
+    def display_information(self):
+        print(f"Product ID: {self.__product_id}")
+        print(f"Product Name: {self.__name}")
+        print(f"Price: {self.__price}")
+        print(f"Stock Quantity: {self.__stock}")
     
 class Inventory:
     def __init__(self):
-        pass
+        self.__product_list = [] # Stores Product Objects in this List
     
-    def add_product(self):
-        pass
+    # Adds Product to Product List
+    def add_product(self, product_id: str, product_name: str, price: float, stock_quantity: int):
+        product_object = Product(product_id, product_name, price, stock_quantity)
+        self.__product_list.append(product_object)
+        print(f"{product_name} added to Inventory.")
+    # def add_product(self):
+    #     try:
+    #         print("ADD NEW PRODUCT")
+    #         product_id = input("Enter Product ID: ")
+    #         product_name = input("Enter Product Name: ")
+            
+    #         # Check if Product ID or Product Name is Empty
+    #         if not product_id.strip():
+    #             raise ValueError("Error: Product ID cannot be Empty.")
+    #         if not product_name.strip():
+    #             raise ValueError("Error: Product Name cannot be Empty.")
+            
+    #         product_price = float(input("Enter Product Price: "))    
+    #         stock_quantity = int(input("Enter Stock Quantity: "))
+    #         if product_price < 0 or stock_quantity < 0: raise ValueError # Raise Error if Product Price or Stock Quantity is Negative
+    #         product_obj = Product(product_id, product_name, product_price, stock_quantity)
+    #         self.__product_list.append(product_obj)
+            
+    #         print("Product Added Successfully.")
+    #     except ValueError as v:
+    #         if "Empty" in str(v): # Error caused by Product ID or Product Name
+    #             print(v)
+    #         else: # Error caused by Product Price and Stock Quantity
+    #             print("Error: Please enter a Non-Negative Number for Product Price and Stock Quantity.")
+    #     except Exception as e:
+    #         print(f"Error: {e}")
     
-    def search_product(self):
-        pass
+    # Searches for Products
+    def search_product(self, product_id: str):
+        for product_object in self.__product_list:
+            if product_object.product_id == product_id:
+                print("Product Found")
+                print("-" * 70)
+                product_object.display_information()
+            else:
+                print("Product Not Found.")
     
+    # Display all Products
     def dispay_all(self):
-        pass
+        print("Current Inventory")
+        print("-" * 70)
+        if self.__product_list:
+            for product_object in self.__product_list:
+                product_object.display_information()
+        else:
+            print("No Products in Inventory.")
+        
+    
+    
+class Menu():
+    
