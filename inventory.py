@@ -19,7 +19,7 @@ class Product:
     
     # Updates Product's Stock Quantity
     def update_stock(self, quantity: int):
-        if quantity.isdigit(): # isdigit checks for negative numbers as well.
+        if quantity:
             self.__stock = quantity
             print("Stock Quantity Updated.")
         else:
@@ -99,10 +99,12 @@ class File():
             inventory_dict = [vars(product) for product in inventory] # Convert Product Objects to Product Dictionaries
             with open("inventory.json", mode="w") as file:
                 json.dump(inventory, file, indent=4)
+                print("\nSaving inventory...")
+                print("Inventory saved successfully to inventory.json.\n")
                 return True
         except Exception as e:
             print(f"Error saving file: {e}")
-            return False        
+            return False
         
 # Main Class handles Main Program Flow
 class Main():
@@ -137,14 +139,14 @@ class Main():
     def main():
         inventory = File.load_inventory()
         Main.display_menu()
-        while True:
-            option = input("Enter Option: ")
-            if option.isdigit() and 1 <= int(option) <= 6:
-                option = int(option)
-                if option == 1: # Display All Products
-                    inventory.display_all()
-                elif option == 2: # Add Product
-                    try:
+        try:
+            while True:
+                option = Main.get_user_input(int, "Enter Option: ")
+                if 1 <= int(option) <= 6:
+                    option = int(option)
+                    if option == 1: # Display All Products
+                        inventory.display_all()
+                    elif option == 2: # Add Product
                         print("Add New Product")
                         product_id = Main.get_user_input(str, "Enter Product ID: ")
                         product_name = Main.get_user_input(str, "Enter Product Name: ")
@@ -153,45 +155,41 @@ class Main():
                     
                         product_object = Product(product_id, product_name, price, stock_quantity)
                         inventory.add_product(product_object)
-                    except ValueError as e:
-                        print(f"Error: {e}")
-                elif option == 3:
-                    # update_stock(inventory)
-                    print("Update Stock Quantity")
-                    product_id = Main.get_user_input(str, "Enter Product ID: ")
-                    for product in inventory:
-                        if product.product_id == product_id:
-                            print("\nProduct Found:")
-                            product.display_information()
-
-                            try:
+                    elif option == 3: # Update Stock
+                        print("Update Stock Quantity")
+                        product_id = Main.get_user_input(str, "Enter Product ID: ")
+                        for product in inventory:
+                            if product.product_id == product_id:
+                                print("\nProduct Found:")
+                                product.display_information()
                                 stock_quantity = Main.get_user_input(int, "Enter New Stock Quantity: ")
                                 product.update_stock(stock_quantity)
-                            except ValueError as e:
-                                print(f"Error: {e}")
-                elif option == 4:
-                    # search_product(inventory)
-                    pass
-                elif option == 5:
-                    # if save_inventory(inventory):
-                    #     print("\nSaving inventory...")
-                    #     print("Inventory saved successfully to inventory.json.\n")
-                    # else:
-                    #     print("Error Saving Inventory. Please Try Again")
-                    pass
-                elif option == 6:
-                    # if save_inventory(inventory):
-                    #     print("\nSaving inventory before exit...")
-                    #     print("Inventory saved successfully.\n")
-                    #     print("Thank you for using Inventory Management System.")
-                    #     print("Program terminated.")
-                    #     break
-                    # else:
-                    #     print("Error Saving Inventory.")
-                    #     exit_without_save = input("Exit Without Saving? (Yes/No): ")
-                    #     if exit_without_save.lower() == "yes":
-                    #         break
-                    pass
-                        
-            else:
-                print("Invalid option. Enter a number from 1 to 6.\n")
+                    elif option == 4: # Search Product
+                        print("Search Product")
+                        product_id = Main.get_user_input(str, "Enter Product ID: ")
+                        for product in inventory:
+                            if product.product_id == product_id:
+                                print("\nProduct Found:")
+                                product.display_information()
+                    elif option == 5:
+                        File.save_inventory(inventory)
+                    elif option == 6:
+                        if File.save_inventory(inventory):
+                            print("Thank you for using Inventory Management System.")
+                            print("Program terminated.")
+                            break
+                        else:
+                            print("Error Saving Inventory.")
+                            exit_without_save = input("Exit Without Saving? (Yes/No): ")
+                            if exit_without_save.lower() == "yes":
+                                break
+                else:
+                    print("Invalid option. Enter a number from 1 to 6.\n")
+        except ValueError as e: # Input Validation Failed
+            print(f"Error: {e}")
+        except Exception as e:
+            print(f"Error: {e}")
+            
+        
+if __name__ == "__main__":
+    Main.main()
