@@ -1,145 +1,241 @@
 import json
 
-def load_inventory():
-    print("=" * 30)
-    print("INVENTORY MANAGEMENT SYSTEM")
-    print("=" * 30 + "\n")
-    try:
-        with open("inventory.json", mode="a+") as file: # a+ opens the file for appending and reading but creates it if it doesn't exist
-            file.seek(0) # put file pointer to start of file for reading
-            inventory = json.load(file)
-            print("inventory.json found.")
-            print("Inventory loaded successfully.\n")
-    except json.decoder.JSONDecodeError:
-        inventory = []
-        print("File was not found or File is empty.")
-        print("Empty inventory loaded.\n")
-    except Exception as e:
-        print(f"Error loading inventory: {e}")
-        print("Empty inventory loaded.\n")
-        inventory = []
-    return inventory
-
-def print_menu():
-    print("-" * 10 + " MENU " + "-" * 10)
-    print("1. Display All Products")
-    print("2. Add Product")
-    print("3. Update Stock")
-    print("4. Search Product")
-    print("5. Save Inventory")
-    print("6. Exit")
-    print("-" * 25 + "\n")
-
-def display_all(inventory):
-    print("\nCurrent Inventory")
-    print("-" * 70)
-    if inventory:
-        for product in inventory:
-            print(f"ID: {product['product_id']} | Name: {product['product_name']} | Price: ${product['product_price']:.2f} | Stock: {product['current_stock']}")
-    else:
-        print("No Products in Inventory.")
-    print("-" * 70)
+# Stored Product Information and Manages Product Object
+class Product:
+    def __init__(self, product_id: str, name: str, price: float, stock: int):
+        # Private Attributes
+        self.__product_id = product_id
+        self.__name = name
+        self.__price = price
+        self.__stock = stock
     
-def add_product(inventory):
-    print("\nAdd New Product")
-    try:
-        product_id = str(input("Product ID: "))
-        product_name = str(input("Product Name: "))
-        product_price = float(input("Price: "))
-        current_stock = int(input("Stock Quantity: "))
-        
-        new_product = {"product_id" : product_id,
-                        "product_name" : product_name,
-                        "product_price" : product_price,
-                        "current_stock" : current_stock
-                       }
-
-        inventory.append(new_product)
-        print("\nProduct added successfully!\n")
-    except Exception as e:
-        print(f"Error Adding Product: {e}")
+    # Getter Methods
+    @property
+    def product_id(self):
+        return self.__product_id
     
-def update_stock(inventory):
-    print("\nUpdate Stock")
-    product_id = str(input("Enter Product ID: "))
-    for product in inventory:
-        if product["product_id"] == product_id:
-            print("\nProduct Found:")
-            print("Name:", product["product_name"])
-            print("Current Stock:", product["current_stock"], "\n")
-            try:
-                new_stock_quantity = int(input("New Stock Quantity: "))
-                if new_stock_quantity >= 0:
-                    product["current_stock"] = new_stock_quantity
-                    print("\nStock updated successfully!\n")
-                else:
-                    raise ValueError
-            except ValueError:
-                print("Please enter a Positive Integer.\n")
-            break
-            
-    else: # for...else will execute if for loop doesn't meet break
-        print("Product Not Found.\n")
-        
-def search_product(inventory):
-    print("\nSearch Product")
-    product_id = str(input("Enter Product ID: "))
-    for product in inventory:
-        if product["product_id"] == product_id:
-            print("\nProduct Found")
-            print("-" * 70)
-            print("ID:", product["product_id"])
-            print("Name:", product["product_name"])
-            print(f"Price: ${product['product_price']:.2f}")
-            print("Stock:", product["current_stock"])
-            print("-" * 70 + "\n")
-            break
-    else:
-        print("\nProduct not found.\n")
-        
-def save_inventory(inventory):
-    try:
-        with open("inventory.json", mode="w") as file:
-            json.dump(inventory, file, indent=4)
-        return True
-    except Exception as e:
-        print(f"Error saving file: {e}")
-        return False
+    @property
+    def product_name(self):
+        return self.__name
+    
+    # Updates Product's Stock Quantity
+    def update_stock(self, quantity: int):
+        if isinstance(quantity, int):
+            self.__stock = quantity
+            print("Stock Quantity Updated.\n")
+        else:
+            print("Error: Enter a Positive Integer.")
+    
+    # Displays Product Summary
+    def display_information(self):
+        print(f"Product ID: {self.__product_id}")
+        print(f"Product Name: {self.__name}")
+        print(f"Price: ${self.__price:.2f}")
+        print(f"Stock Quantity: {self.__stock}")
 
-inventory = load_inventory()
-print_menu()
+# Inventory Class handles Inventory Management System
+class Inventory:
+    def __init__(self):
+        self.__product_list = [] # Stores Product Objects in this List
+    
+    # Getter for Product List
+    @property
+    def product_list(self):
+        return self.__product_list
+    
+    # Adds Product to Product List
+    def add_product(self, product_object: Product):
+        if isinstance(product_object, Product):
+            self.__product_list.append(product_object)
+            return True
+        else:
+            return False
 
-while True:
-    option = input("Enter Option: ")
-    if option.isdigit() and 1 <= int(option) <= 6:
-        option = int(option)
-        if option == 1:
-            display_all(inventory)
-        elif option == 2:
-            add_product(inventory)
-        elif option == 3:
-            update_stock(inventory)
-        elif option == 4:
-            search_product(inventory)
-        elif option == 5:
-            if save_inventory(inventory):
+    # Searches for Products
+    def search_product(self, product_id: str):
+        for product_object in self.__product_list:
+            if product_object.product_id == product_id:
+                print("Product Found")
+                print("-" * 70)
+                product_object.display_information()
+            else:
+                print("Product Not Found.")
+    
+    # Display all Products
+    def display_all(self):
+        print("\nCurrent Inventory")
+        print("-" * 70)
+        if self.__product_list:
+            for product_object in self.__product_list:
+                product_object.display_information()
+                print()
+        else:
+            print("No Products in Inventory.")
+        
+# File Class handles Loading and Saving of JSON Database
+class File():
+    # Loads Inventory in JSON to Inventory Object
+    def load_inventory():
+        print("=" * 30)
+        print("INVENTORY MANAGEMENT SYSTEM")
+        print("=" * 30 + "\n")
+        inventory = Inventory()
+        try:
+            with open("inventory.json", mode="a+") as file: # a+ opens the file for appending and reading but creates it if it doesn't exist
+                file.seek(0) # put file pointer to start of file for reading
+                print("inventory.json found.")
+                
+                # Load Inventory Object with Product Objects
+                inventory_dict = json.load(file) # Loads Inventory Dictionary with Product Dictionaries
+                for product in inventory_dict:
+                    product_object = Product(**product) # Convert Product Dictionaries to Product Objects via **kwargs unpacking
+                    inventory.add_product(product_object)
+                print("Inventory loaded successfully.\n")
+        except json.decoder.JSONDecodeError:
+            print("File was not found or File is empty.")
+            print("Empty inventory loaded.\n")
+        except Exception as e:
+            print(f"Error loading inventory: {e}")
+            print("Empty inventory loaded.\n")
+        return inventory
+    
+    # Saves Inventory Object into JSON Database
+    def save_inventory(inventory: Inventory):
+        try:
+            inventory_dict = []
+            # Convert Inventory Object to Dictionary
+            for product in inventory.product_list:
+                product = vars(product)
+                clean_product = {key.replace("_Product__",""): value for key, value in product.items()} # Replace Name Mangling
+                inventory_dict.append(clean_product)
+                
+            # Writing into JSON Database
+            with open("inventory.json", mode="w") as file:
+                json.dump(inventory_dict, file, indent=4)
                 print("\nSaving inventory...")
                 print("Inventory saved successfully to inventory.json.\n")
-            else:
-                print("Error Saving Inventory. Please Try Again")
-        elif option == 6:
-            if save_inventory(inventory):
-                print("\nSaving inventory before exit...")
-                print("Inventory saved successfully.\n")
-                print("Thank you for using Inventory Management System.")
-                print("Program terminated.")
-                break
-            else:
-                print("Error Saving Inventory.")
-                exit_without_save = input("Exit Without Saving? (Yes/No): ")
-                if exit_without_save.lower() == "yes":
-                    break
-                
-    else:
-        print("Invalid option. Enter a number from 1 to 6.\n")
+                return True
+        except Exception as e:
+            print(f"Error saving file: {e}")
+            return False
         
+# Main Class handles Main Program Flow
+class Main():
+    # Display Main Menu
+    def display_menu():
+        print("-" * 10 + " MENU " + "-" * 10)
+        print("1. Display All Products")
+        print("2. Add Product")
+        print("3. Update Stock")
+        print("4. Search Product")
+        print("5. Save Inventory")
+        print("6. Exit")
+        print("-" * 25 + "\n")
+        
+    # Get User Input
+    def get_user_input(convert_type, prompt):
+        try:
+            user_input = input(prompt)
+            # Input Validation
+            if not user_input.strip():
+                raise ValueError("Input cannot be Empty.\n")
+            
+            try:
+                # Convert int and float
+                if convert_type in (int, float):
+                    user_input = convert_type(user_input)
+                    if user_input <= 0: # Make sure number is not negative and not 0
+                        raise ValueError
+                # Convert string
+                else:
+                    user_input = convert_type(user_input) # Type Conversion
+            except ValueError as e:
+                if convert_type == int:
+                    raise ValueError("Enter a Non-Negative Integer\n")
+                elif convert_type == float:
+                    raise ValueError("Input a Non-Negative Number\n")
+            
+            return user_input
+        except ValueError as e:
+            raise ValueError(e)
+            
+    # Main Program Flow
+    def main():
+        inventory = File.load_inventory()
+        Main.display_menu()
+        while True:
+            try:
+                option = Main.get_user_input(int, "Enter Option: ")
+                if 1 <= option <= 6:
+                    # Display All Products
+                    if option == 1:
+                        inventory.display_all()
+                        
+                    # Add Product
+                    elif option == 2:
+                        print("\nAdd New Product")
+                        print("-" * 70)
+                        
+                        # Initialising Product Object
+                        product_id = Main.get_user_input(str, "Enter Product ID: ")
+                        product_name = Main.get_user_input(str, "Enter Product Name: ")
+                        price = Main.get_user_input(float, "Enter Price: ")
+                        stock_quantity = Main.get_user_input(int, "Enter Stock Quantity: ")
+                    
+                        product_object = Product(product_id, product_name, price, stock_quantity)
+                        
+                        # Add Product to Inventory's Product List
+                        if inventory.add_product(product_object):
+                            print(f"{product_object.product_name} added Successfully.\n")
+                        else:
+                            print(f"Failed to add {product_object.product_name}")
+                            
+                    # Update Stock Quantity
+                    elif option == 3:
+                        print("\nUpdate Stock Quantity")
+                        print("-" * 70)
+                        product_id = Main.get_user_input(str, "Enter Product ID: ")
+                        for product in inventory.product_list:
+                            if product.product_id == product_id:
+                                print("\nProduct Found:")
+                                product.display_information()
+                                stock_quantity = Main.get_user_input(int, "\nEnter New Stock Quantity: ")
+                                product.update_stock(stock_quantity)
+                                
+                    # Search for Product
+                    elif option == 4:
+                        print("\nSearch Product")
+                        print("-" * 70)
+                        product_id = Main.get_user_input(str, "Enter Product ID: ")
+                        for product in inventory.product_list:
+                            if product.product_id == product_id:
+                                print("\nProduct Found:")
+                                product.display_information()
+                                print()
+                                break
+                            
+                    # Save Inventory into JSON Database
+                    elif option == 5:
+                        File.save_inventory(inventory)
+                        
+                    # Save Inventory into JSON Database and QUIT
+                    elif option == 6:
+                        if File.save_inventory(inventory):
+                            print("Thank you for using Inventory Management System.")
+                            print("Program terminated.")
+                            break
+                        else:
+                            print("Error Saving Inventory.")
+                            exit_without_save = input("Exit Without Saving? (Yes/No): ")
+                            if exit_without_save.lower() == "yes":
+                                break
+                else:
+                    print("Invalid option. Enter a number from 1 to 6.\n")
+            except ValueError as e: # User Input Validation Failed
+                print(f"Error: {e}")
+            except Exception as e:
+                print(f"Error: {e}")
+            
+        
+if __name__ == "__main__":
+    Main.main() # Main Program Flow
