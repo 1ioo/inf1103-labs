@@ -1,5 +1,6 @@
 import json
 
+# Stored Product Information and Manages Product Object
 class Product:
     def __init__(self, product_id: str, name: str, price: float, stock: int):
         # Private Attributes
@@ -8,7 +9,7 @@ class Product:
         self.__price = price
         self.__stock = stock
     
-    # Getter Method for Product ID Field
+    # Getter Methods
     @property
     def product_id(self):
         return self.__product_id
@@ -19,9 +20,9 @@ class Product:
     
     # Updates Product's Stock Quantity
     def update_stock(self, quantity: int):
-        if quantity:
+        if isinstance(quantity, int):
             self.__stock = quantity
-            print("Stock Quantity Updated.")
+            print("Stock Quantity Updated.\n")
         else:
             print("Error: Enter a Positive Integer.")
     
@@ -29,7 +30,7 @@ class Product:
     def display_information(self):
         print(f"Product ID: {self.__product_id}")
         print(f"Product Name: {self.__name}")
-        print(f"Price: {self.__price}")
+        print(f"Price: ${self.__price:.2f}")
         print(f"Stock Quantity: {self.__stock}")
 
 # Inventory Class handles Inventory Management System
@@ -46,7 +47,9 @@ class Inventory:
     def add_product(self, product_object: Product):
         if isinstance(product_object, Product):
             self.__product_list.append(product_object)
-            print(f"{product_object.product_name} added to Inventory.")
+            return True
+        else:
+            return False
 
     # Searches for Products
     def search_product(self, product_id: str):
@@ -59,17 +62,19 @@ class Inventory:
                 print("Product Not Found.")
     
     # Display all Products
-    def dispay_all(self):
-        print("Current Inventory")
+    def display_all(self):
+        print("\nCurrent Inventory")
         print("-" * 70)
         if self.__product_list:
             for product_object in self.__product_list:
                 product_object.display_information()
+                print()
         else:
             print("No Products in Inventory.")
         
 # File Class handles Loading and Saving of JSON Database
 class File():
+    # Loads Inventory in JSON to Inventory Object
     def load_inventory():
         print("=" * 30)
         print("INVENTORY MANAGEMENT SYSTEM")
@@ -94,11 +99,19 @@ class File():
             print("Empty inventory loaded.\n")
         return inventory
     
+    # Saves Inventory Object into JSON Database
     def save_inventory(inventory: Inventory):
         try:
-            inventory_dict = [vars(product) for product in inventory] # Convert Product Objects to Product Dictionaries
+            inventory_dict = []
+            # Convert Inventory Object to Dictionary
+            for product in inventory.product_list:
+                product = vars(product)
+                clean_product = {key.replace("_Product__",""): value for key, value in product.items()} # Replace Name Mangling
+                inventory_dict.append(clean_product)
+                
+            # Writing into JSON Database
             with open("inventory.json", mode="w") as file:
-                json.dump(inventory, file, indent=4)
+                json.dump(inventory_dict, file, indent=4)
                 print("\nSaving inventory...")
                 print("Inventory saved successfully to inventory.json.\n")
                 return True
@@ -122,14 +135,25 @@ class Main():
     # Get User Input
     def get_user_input(convert_type, prompt):
         try:
-            user_input = convert_type(input(prompt)) # Type Conversion
+            user_input = input(prompt)
             # Input Validation
-            if convert_type == str:
-                if not user_input.strip():
-                    raise ValueError("Field cannot be Empty.")
-            elif convert_type in (int, float):
-                if user_input < 0:
-                    raise ValueError("Enter a Non-Negative Number.")
+            if not user_input.strip():
+                raise ValueError("Input cannot be Empty.\n")
+            
+            try:
+                # Convert int and float
+                if convert_type in (int, float):
+                    user_input = convert_type(user_input)
+                    if user_input <= 0: # Make sure number is not negative and not 0
+                        raise ValueError
+                # Convert string
+                else:
+                    user_input = convert_type(user_input) # Type Conversion
+            except ValueError as e:
+                if convert_type == int:
+                    raise ValueError("Enter a Non-Negative Integer\n")
+                elif convert_type == float:
+                    raise ValueError("Input a Non-Negative Number\n")
             
             return user_input
         except ValueError as e:
@@ -139,40 +163,62 @@ class Main():
     def main():
         inventory = File.load_inventory()
         Main.display_menu()
-        try:
-            while True:
+        while True:
+            try:
                 option = Main.get_user_input(int, "Enter Option: ")
-                if 1 <= int(option) <= 6:
-                    option = int(option)
-                    if option == 1: # Display All Products
+                if 1 <= option <= 6:
+                    # Display All Products
+                    if option == 1:
                         inventory.display_all()
-                    elif option == 2: # Add Product
-                        print("Add New Product")
+                        
+                    # Add Product
+                    elif option == 2:
+                        print("\nAdd New Product")
+                        print("-" * 70)
+                        
+                        # Initialising Product Object
                         product_id = Main.get_user_input(str, "Enter Product ID: ")
                         product_name = Main.get_user_input(str, "Enter Product Name: ")
-                        price = Main.get_user_input(str, "Enter Price: ")
-                        stock_quantity = Main.get_user_input(str, "Enter Stock Quantity: ")
+                        price = Main.get_user_input(float, "Enter Price: ")
+                        stock_quantity = Main.get_user_input(int, "Enter Stock Quantity: ")
                     
                         product_object = Product(product_id, product_name, price, stock_quantity)
-                        inventory.add_product(product_object)
-                    elif option == 3: # Update Stock
-                        print("Update Stock Quantity")
+                        
+                        # Add Product to Inventory's Product List
+                        if inventory.add_product(product_object):
+                            print(f"{product_object.product_name} added Successfully.\n")
+                        else:
+                            print(f"Failed to add {product_object.product_name}")
+                            
+                    # Update Stock Quantity
+                    elif option == 3:
+                        print("\nUpdate Stock Quantity")
+                        print("-" * 70)
                         product_id = Main.get_user_input(str, "Enter Product ID: ")
-                        for product in inventory:
+                        for product in inventory.product_list:
                             if product.product_id == product_id:
                                 print("\nProduct Found:")
                                 product.display_information()
-                                stock_quantity = Main.get_user_input(int, "Enter New Stock Quantity: ")
+                                stock_quantity = Main.get_user_input(int, "\nEnter New Stock Quantity: ")
                                 product.update_stock(stock_quantity)
-                    elif option == 4: # Search Product
-                        print("Search Product")
+                                
+                    # Search for Product
+                    elif option == 4:
+                        print("\nSearch Product")
+                        print("-" * 70)
                         product_id = Main.get_user_input(str, "Enter Product ID: ")
-                        for product in inventory:
+                        for product in inventory.product_list:
                             if product.product_id == product_id:
                                 print("\nProduct Found:")
                                 product.display_information()
+                                print()
+                                break
+                            
+                    # Save Inventory into JSON Database
                     elif option == 5:
                         File.save_inventory(inventory)
+                        
+                    # Save Inventory into JSON Database and QUIT
                     elif option == 6:
                         if File.save_inventory(inventory):
                             print("Thank you for using Inventory Management System.")
@@ -185,11 +231,11 @@ class Main():
                                 break
                 else:
                     print("Invalid option. Enter a number from 1 to 6.\n")
-        except ValueError as e: # Input Validation Failed
-            print(f"Error: {e}")
-        except Exception as e:
-            print(f"Error: {e}")
+            except ValueError as e: # User Input Validation Failed
+                print(f"Error: {e}")
+            except Exception as e:
+                print(f"Error: {e}")
             
         
 if __name__ == "__main__":
-    Main.main()
+    Main.main() # Main Program Flow
