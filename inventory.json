@@ -1,26 +1,32 @@
 [
     {
         "product_id": "P001",
-        "product_name": "Laptop",
-        "product_price": 1200.0,
-        "current_stock": 15
+        "name": "Laptop",
+        "price": 1200.0,
+        "stock": 15
     },
     {
         "product_id": "P002",
-        "product_name": "Mouse",
-        "product_price": 25.5,
-        "current_stock": 50
+        "name": "Mouse",
+        "price": 25.5,
+        "stock": 50
     },
     {
         "product_id": "P003",
-        "product_name": "Keyboard",
-        "product_price": 45.0,
-        "current_stock": 25
+        "name": "Keyboard",
+        "price": 45.0,
+        "stock": 25
     },
     {
         "product_id": "P004",
-        "product_name": "Monitor",
-        "product_price": 299.99,
-        "current_stock": 10
+        "name": "Monitor",
+        "price": 299.99,
+        "stock": 10
+    },
+    {
+        "product_id": "P005",
+        "name": "Mousepad",
+        "price": 21.5,
+        "stock": 15
     }
 ]
