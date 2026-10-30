@@ -64,9 +64,9 @@ class PhysicalProduct(Product, CanBeShipped):
         
     def calculate_shipping_cost(self):
         if self.__weight < 50:
-            return self.stock_quantity * 2
+            return 2
         else:
-            return self.stock_quantity * 4
+            return 4
 
 # Child Class of Product to represent Digital Products        
 class DigitalProduct(Product):
@@ -137,8 +137,14 @@ class File():
                 # Load Inventory Object with Product Objects
                 inventory_dict = json.load(file) # Loads Inventory Dictionary with Product Dictionaries
                 for product in inventory_dict:
-                    product_object = Product(**product) # Convert Product Dictionaries to Product Objects via **kwargs unpacking
+                    if product["type"] == "physical":
+                        del product["type"]
+                        product_object = PhysicalProduct(**product) # Convert to PhysicalProduct Objects via **kwargs unpacking
+                    else:
+                        del product["type"]
+                        product_object = DigitalProduct(**product) # Convert to DigitalProduct Objects via **kwargs unpacking
                     inventory.add_product(product_object)
+                    
                 print("Inventory loaded successfully.\n")
         except json.decoder.JSONDecodeError:
             print("File was not found or File is empty.")
@@ -154,9 +160,15 @@ class File():
             inventory_dict = []
             # Convert Inventory Object to Dictionary
             for product in inventory.product_list:
-                product = vars(product)
-                clean_product = {key.replace("_Product__",""): value for key, value in product.items()} # Replace Name Mangling
-                inventory_dict.append(clean_product)
+                product_dict = vars(product)
+                if isinstance(product, PhysicalProduct):
+                    clean_product = {key.replace("_PhysicalProduct__",""): value for key, value in product_dict.items()} # Replace Name Mangling
+                    clean_product["type"] = "physical" # Add in Physical Type
+                    inventory_dict.append(clean_product)
+                else: # DigitalProduct
+                    clean_product = {key.replace("_DigitalProduct__",""): value for key, value in product_dict.items()} # Replace Name Mangling
+                    clean_product["type"] = "digital" # Add in Digital Type
+                    inventory_dict.append(clean_product)
                 
             # Writing into JSON Database
             with open("inventory.json", mode="w") as file:
@@ -225,13 +237,22 @@ class Main():
                         print("\nAdd New Product")
                         print("-" * 70)
                         
-                        # Initialising Product Object
+                        # Getting User Input for Initialisation
                         product_id = Main.get_user_input(str, "Enter Product ID: ")
                         product_name = Main.get_user_input(str, "Enter Product Name: ")
                         price = Main.get_user_input(float, "Enter Price: ")
                         stock_quantity = Main.get_user_input(int, "Enter Stock Quantity: ")
-                    
-                        product_object = Product(product_id, product_name, price, stock_quantity)
+                        product_type = Main.get_user_input(str, "Enter Product Type (physical/digital): ").lower()
+
+                        # Inititalising Object based off Physical or Digital Products
+                        if product_type == "physical":
+                            weight = Main.get_user_input(float, "Enter Weight (kg): ")
+                            product_object = PhysicalProduct(product_id, product_name, price, stock_quantity, weight)
+                        elif product_type == "digital":
+                            download_size = Main.get_user_input(float, "Enter Download Size (MB): ")
+                            product_object = DigitalProduct(product_id, product_name, price, stock_quantity, download_size)
+                        else:
+                            raise TypeError("Enter the correct product type.")
                         
                         # Add Product to Inventory's Product List
                         if inventory.add_product(product_object):
@@ -282,16 +303,11 @@ class Main():
                     print("Invalid option. Enter a number from 1 to 6.\n")
             except ValueError as e: # User Input Validation Failed
                 print(f"Error: {e}")
+            except TypeError as e:
+                print(f"Error: {e}")
             except Exception as e:
                 print(f"Error: {e}")
             
         
 if __name__ == "__main__":
-    # Main.main() # Main Program Flow
-    obj = DigitalProduct("1", "keyboard", 25, 25, 25)
-    obj2 = PhysicalProduct("2", "keyboard", 25, 25, 25)
-    # obj.get_fulfillment_info()
-    # obj2.get_fulfillment_info()
-    # print(obj2.calculate_shipping_cost())
-    
-    # obj3 = Product("1", "keyboard", 25, 25, 25)
+    Main.main() # Main Program Flow
