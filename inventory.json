@@ -3,30 +3,48 @@
         "product_id": "P001",
         "name": "Laptop",
         "price": 1200.0,
-        "stock": 15
+        "stock": 15,
+        "weight": 8.1,
+        "type": "physical"
     },
     {
         "product_id": "P002",
         "name": "Mouse",
         "price": 25.5,
-        "stock": 50
+        "stock": 50,
+        "weight": 0.5,
+        "type": "physical"
     },
     {
         "product_id": "P003",
         "name": "Keyboard",
         "price": 45.0,
-        "stock": 25
+        "stock": 25,
+        "weight": 1.0,
+        "type": "physical"
     },
     {
         "product_id": "P004",
         "name": "Monitor",
         "price": 299.99,
-        "stock": 10
+        "stock": 10,
+        "weight": 4.5,
+        "type": "physical"
     },
     {
         "product_id": "P005",
-        "name": "Mousepad",
+        "name": "Movie Tickets",
         "price": 21.5,
-        "stock": 15
+        "stock": 15,
+        "download_size": 10.0,
+        "type": "digital"
+    },
+    {
+        "product_id": "P006",
+        "name": "E-Book",
+        "price": 15.0,
+        "stock": 4,
+        "download_size": 75.0,
+        "type": "digital"
     }
 ]
