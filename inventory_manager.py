@@ -29,7 +29,7 @@ class Product(ABC):
             self.__stock = quantity
             print("Stock Quantity Updated.\n")
         else:
-            print("Error: Enter a Positive Integer.")
+            raise ValueError("Error: Enter a Positive Integer.\n")
     
     # Displays Product Summary
     def display_information(self):
@@ -108,8 +108,10 @@ class Inventory:
                 print("Product Found")
                 print("-" * 70)
                 product_object.display_information()
-            else:
-                print("Product Not Found.")
+                print()
+                break
+        else:
+            print("Product Not Found.\n")
     
     # Display all Products
     def display_all(self):
@@ -133,7 +135,7 @@ class File():
         try:
             with open("inventory.json", mode="a+") as file: # a+ opens the file for appending and reading but creates it if it doesn't exist
                 file.seek(0) # put file pointer to start of file for reading
-                print("inventory.json found.")
+                print("Finding inventory.json...")
                 
                 # Load Inventory Object with Product Objects
                 inventory_dict = json.load(file) # Loads Inventory Dictionary with Product Dictionaries
@@ -274,18 +276,15 @@ class Main():
                                 product.display_information()
                                 stock_quantity = Main.get_user_input(int, "\nEnter New Stock Quantity: ")
                                 product.update_stock(stock_quantity)
+                        else:
+                            print("Product Not Found.\n")
                                 
                     # Search for Product
                     elif option == 4:
                         print("\nSearch Product")
                         print("-" * 70)
                         product_id = Main.get_user_input(str, "Enter Product ID: ")
-                        for product in inventory.product_list:
-                            if product.product_id == product_id:
-                                print("\nProduct Found:")
-                                product.display_information()
-                                print()
-                                break
+                        inventory.search_product(product_id)
                             
                     # Save Inventory into JSON Database
                     elif option == 5:
