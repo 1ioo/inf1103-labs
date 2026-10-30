@@ -65,9 +65,9 @@ class PhysicalProduct(Product, CanBeShipped):
         
     def calculate_shipping_cost(self):
         if self.__weight < 5:
-            return 2
+            return 2.0
         else:
-            return 4
+            return 4.0
 
 # Child Class of Product to represent Digital Products        
 class DigitalProduct(Product):
