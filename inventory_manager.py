@@ -58,12 +58,13 @@ class PhysicalProduct(Product, CanBeShipped):
         super().display_information()
         print(f"Weight: {self.__weight:.2f}KG")
         self.get_fulfillment_info()
+        print(f"Shipping Fee for Each Product Costs ${self.calculate_shipping_cost():.2f}")
         
     def get_fulfillment_info(self):
         print("The product requires physical shipping.")
         
     def calculate_shipping_cost(self):
-        if self.__weight < 50:
+        if self.__weight < 5:
             return 2
         else:
             return 4
@@ -162,11 +163,13 @@ class File():
             for product in inventory.product_list:
                 product_dict = vars(product)
                 if isinstance(product, PhysicalProduct):
-                    clean_product = {key.replace("_PhysicalProduct__",""): value for key, value in product_dict.items()} # Replace Name Mangling
+                    clean_product = {key.replace("_PhysicalProduct__",""): value for key, value in product_dict.items()} # Replace Subclass Name Mangling
+                    clean_product = {key.replace("_Product__",""): value for key, value in clean_product.items()} # Replace Super class Name Mangling
                     clean_product["type"] = "physical" # Add in Physical Type
                     inventory_dict.append(clean_product)
                 else: # DigitalProduct
-                    clean_product = {key.replace("_DigitalProduct__",""): value for key, value in product_dict.items()} # Replace Name Mangling
+                    clean_product = {key.replace("_DigitalProduct__",""): value for key, value in product_dict.items()} # Replace Subclass Name Mangling
+                    clean_product = {key.replace("_Product__",""): value for key, value in clean_product.items()} # Replace Super class Name Mangling
                     clean_product["type"] = "digital" # Add in Digital Type
                     inventory_dict.append(clean_product)
                 
@@ -252,13 +255,13 @@ class Main():
                             download_size = Main.get_user_input(float, "Enter Download Size (MB): ")
                             product_object = DigitalProduct(product_id, product_name, price, stock_quantity, download_size)
                         else:
-                            raise TypeError("Enter the correct product type.")
+                            raise TypeError("Enter the correct product type.\n")
                         
                         # Add Product to Inventory's Product List
                         if inventory.add_product(product_object):
                             print(f"{product_object.product_name} added Successfully.\n")
                         else:
-                            print(f"Failed to add {product_object.product_name}")
+                            print(f"Failed to add {product_object.product_name}\n")
                             
                     # Update Stock Quantity
                     elif option == 3:
