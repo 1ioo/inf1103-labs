@@ -1,6 +1,6 @@
 import json
 
-# Stored Product Information and Manages Product Object
+# Stores Product Information and Manages Product Object
 class Product:
     def __init__(self, product_id: str, name: str, price: float, stock: int):
         # Private Attributes
@@ -32,6 +32,26 @@ class Product:
         print(f"Product Name: {self.__name}")
         print(f"Price: ${self.__price:.2f}")
         print(f"Stock Quantity: {self.__stock}")
+
+# Child Class of Product to represent Physical Products
+class PhysicalProduct(Product):
+    def __init__(self, product_id: str, name: str, price: float, stock: int, weight: float):
+        super().__init__(product_id, name, price, stock)
+        self.__weight = weight
+        
+    def display_information(self):
+        super().display_information()
+        print(f"Weight: {self.__weight:.2f}KG")
+
+# Child Class of Product to represent Digital Products        
+class DigitalProduct(Product):
+    def __init__(self, product_id: str, name: str, price: float, stock: int, download_size: float):
+        super().__init__(product_id, name, price, stock)
+        self.__download_size = download_size
+        
+    def display_information(self):
+        super().display_information()
+        print(f"Download Size: {self.__download_size:.2f} MB")
 
 # Inventory Class handles Inventory Management System
 class Inventory:
@@ -239,3 +259,7 @@ class Main():
         
 if __name__ == "__main__":
     Main.main() # Main Program Flow
+    # obj = DigitalProduct("1", "keyboard", 25, 25, 25)
+    # obj2 = PhysicalProduct("2", "keyboard", 25, 25, 25)
+    # obj.display_information()
+    # obj2.display_information()
