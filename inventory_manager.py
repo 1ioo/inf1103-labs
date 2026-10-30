@@ -1,7 +1,8 @@
 import json
+from abc import ABC, abstractmethod
 
 # Stores Product Information and Manages Product Object
-class Product:
+class Product(ABC):
     def __init__(self, product_id: str, name: str, price: float, stock: int):
         # Private Attributes
         self.__product_id = product_id
@@ -18,6 +19,10 @@ class Product:
     def product_name(self):
         return self.__name
     
+    @property
+    def stock_quantity(self):
+        return self.__stock
+    
     # Updates Product's Stock Quantity
     def update_stock(self, quantity: int):
         if isinstance(quantity, int):
@@ -32,9 +37,19 @@ class Product:
         print(f"Product Name: {self.__name}")
         print(f"Price: ${self.__price:.2f}")
         print(f"Stock Quantity: {self.__stock}")
+        
+    @abstractmethod
+    def get_fulfillment_info(self):
+        pass
+
+# Interface for Physical Products that can be shipped
+class CanBeShipped(ABC):
+    @abstractmethod
+    def calculate_shipping_cost(self):
+        pass
 
 # Child Class of Product to represent Physical Products
-class PhysicalProduct(Product):
+class PhysicalProduct(Product, CanBeShipped):
     def __init__(self, product_id: str, name: str, price: float, stock: int, weight: float):
         super().__init__(product_id, name, price, stock)
         self.__weight = weight
@@ -42,6 +57,16 @@ class PhysicalProduct(Product):
     def display_information(self):
         super().display_information()
         print(f"Weight: {self.__weight:.2f}KG")
+        self.get_fulfillment_info()
+        
+    def get_fulfillment_info(self):
+        print("The product requires physical shipping.")
+        
+    def calculate_shipping_cost(self):
+        if self.__weight < 50:
+            return self.stock_quantity * 2
+        else:
+            return self.stock_quantity * 4
 
 # Child Class of Product to represent Digital Products        
 class DigitalProduct(Product):
@@ -52,6 +77,10 @@ class DigitalProduct(Product):
     def display_information(self):
         super().display_information()
         print(f"Download Size: {self.__download_size:.2f} MB")
+        self.get_fulfillment_info()
+        
+    def get_fulfillment_info(self):
+        print("The product is delivered digitally.")
 
 # Inventory Class handles Inventory Management System
 class Inventory:
@@ -258,8 +287,11 @@ class Main():
             
         
 if __name__ == "__main__":
-    Main.main() # Main Program Flow
-    # obj = DigitalProduct("1", "keyboard", 25, 25, 25)
-    # obj2 = PhysicalProduct("2", "keyboard", 25, 25, 25)
-    # obj.display_information()
-    # obj2.display_information()
+    # Main.main() # Main Program Flow
+    obj = DigitalProduct("1", "keyboard", 25, 25, 25)
+    obj2 = PhysicalProduct("2", "keyboard", 25, 25, 25)
+    # obj.get_fulfillment_info()
+    # obj2.get_fulfillment_info()
+    # print(obj2.calculate_shipping_cost())
+    
+    # obj3 = Product("1", "keyboard", 25, 25, 25)
