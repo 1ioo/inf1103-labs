@@ -105,7 +105,7 @@ class Inventory:
     def search_product(self, product_id: str):
         for product_object in self.__product_list:
             if product_object.product_id == product_id:
-                print("Product Found")
+                print("\nProduct Found")
                 print("-" * 70)
                 product_object.display_information()
                 print()
