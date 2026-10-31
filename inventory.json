@@ -43,8 +43,16 @@
         "product_id": "P006",
         "name": "E-Book",
         "price": 15.0,
-        "stock": 4,
+        "stock": 10,
         "download_size": 75.0,
+        "type": "digital"
+    },
+    {
+        "product_id": "P007",
+        "name": "Picture",
+        "price": 2.0,
+        "stock": 10,
+        "download_size": 0.2,
         "type": "digital"
     }
 ]
