@@ -3,6 +3,7 @@
 from file import File
 from inventory import Inventory
 from product import PhysicalProduct, DigitalProduct
+from supplier import Supplier
         
 # Main Class handles Main Program Flow
 class Main():
@@ -61,20 +62,26 @@ class Main():
                         print("\nAdd New Product")
                         print("-" * 70)
                         
+                        # Supplier Creation
+                        supplier_id = Main.get_user_input(str, "Enter Supplier ID: ")
+                        supplier_name = Main.get_user_input(str, "Enter Supplier Name: ")
+                        supplier_contact_email = Main.get_user_input(str, "Enter Supplier Contact Email: ")
+                        supplier = Supplier(supplier_id, supplier_name, supplier_contact_email)
+                        
                         # Getting User Input for Initialisation
                         product_id = Main.get_user_input(str, "Enter Product ID: ")
                         product_name = Main.get_user_input(str, "Enter Product Name: ")
                         price = Main.get_user_input(float, "Enter Price: ")
                         stock_quantity = Main.get_user_input(int, "Enter Stock Quantity: ")
                         product_type = Main.get_user_input(str, "Enter Product Type (physical/digital): ").lower()
-
+                        
                         # Inititalising Object based off Physical or Digital Products
                         if product_type == "physical":
                             weight = Main.get_user_input(float, "Enter Weight (kg): ")
-                            product_object = PhysicalProduct(product_id, product_name, price, stock_quantity, weight)
+                            product_object = PhysicalProduct(product_id, product_name, price, stock_quantity, supplier, weight)
                         elif product_type == "digital":
                             download_size = Main.get_user_input(float, "Enter Download Size (MB): ")
-                            product_object = DigitalProduct(product_id, product_name, price, stock_quantity, download_size)
+                            product_object = DigitalProduct(product_id, product_name, price, stock_quantity, supplier, download_size)
                         else:
                             raise TypeError("Enter the correct product type.\n")
                         

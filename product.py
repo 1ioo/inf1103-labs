@@ -1,15 +1,17 @@
 # product.py contains all relevant information about the Product class and its subclasses
 
 from abc import ABC, abstractmethod
+from supplier import Supplier
 
 # Stores Product Information and Manages Product Object
 class Product(ABC):
-    def __init__(self, product_id: str, name: str, price: float, stock: int):
+    def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier):
         # Private Attributes
         self.__product_id = product_id
         self.__name = name
         self.__price = price
         self.__stock = stock
+        self.__supplier = supplier
     
     # Getter Methods
     @property
@@ -34,6 +36,7 @@ class Product(ABC):
     
     # Displays Product Summary
     def display_information(self):
+        self.__supplier.display_information()
         print(f"Product ID: {self.__product_id}")
         print(f"Product Name: {self.__name}")
         print(f"Price: ${self.__price:.2f}")
@@ -51,8 +54,8 @@ class CanBeShipped(ABC):
 
 # Child Class of Product to represent Physical Products
 class PhysicalProduct(Product, CanBeShipped):
-    def __init__(self, product_id: str, name: str, price: float, stock: int, weight: float):
-        super().__init__(product_id, name, price, stock)
+    def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier, weight: float):
+        super().__init__(product_id, name, price, stock, supplier)
         self.__weight = weight
         
     def display_information(self):
@@ -72,8 +75,8 @@ class PhysicalProduct(Product, CanBeShipped):
 
 # Child Class of Product to represent Digital Products        
 class DigitalProduct(Product):
-    def __init__(self, product_id: str, name: str, price: float, stock: int, download_size: float):
-        super().__init__(product_id, name, price, stock)
+    def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier, download_size: float):
+        super().__init__(product_id, name, price, stock, supplier)
         self.__download_size = download_size
         
     def display_information(self):
