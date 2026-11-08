@@ -40,4 +40,4 @@ class Inventory:
                 product_object.display_information()
                 print()
         else:
-            print("No Products in Inventory.")
+            print("No Products in Inventory.\n")
