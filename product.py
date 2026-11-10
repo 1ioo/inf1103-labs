@@ -26,6 +26,10 @@ class Product(ABC):
     def stock_quantity(self):
         return self.__stock
     
+    @property
+    def price(self):
+        return self.__price
+    
     # Updates Product's Stock Quantity
     def update_stock(self, quantity: int):
         if isinstance(quantity, int):

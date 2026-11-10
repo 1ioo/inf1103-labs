@@ -117,6 +117,7 @@ class Main():
                             print("\nProduct Found")
                             print("-" * 70)
                             product_object.display_information()
+                            print()
                         else:
                             print("Product Not Found.\n")
                             

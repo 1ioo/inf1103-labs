@@ -32,9 +32,10 @@ class Inventory:
         for product_object in self.__product_list:
             if product_object.product_id == product_id:
                 self.__product_list.remove(product_object)
-                print(f"{product_object.__name} removed.")
+                print(f"{product_object.product_name} removed.\n")
+                break
         else:
-            print(f"{product_id} not found.")
+            print(f"{product_id} not found.\n")
     
     # Display all Products
     def display_all(self):
