@@ -14,8 +14,9 @@ class Main():
         print("2. Add Product")
         print("3. Update Stock")
         print("4. Search Product")
-        print("5. Save Inventory")
-        print("6. Exit")
+        print("5. Remove Product")
+        print("6. Save Inventory")
+        print("7. Exit")
         print("-" * 25 + "\n")
         
     # Get User Input
@@ -52,7 +53,7 @@ class Main():
         while True:
             try:
                 option = Main.get_user_input(int, "Enter Option: ")
-                if 1 <= option <= 6:
+                if 1 <= option <= 7:
                     # Display All Products
                     if option == 1:
                         inventory.display_all()
@@ -111,14 +112,27 @@ class Main():
                         print("\nSearch Product")
                         print("-" * 70)
                         product_id = Main.get_user_input(str, "Enter Product ID: ")
-                        inventory.search_product(product_id)
+                        product_object = inventory.search_product(product_id)
+                        if product_object:
+                            print("\nProduct Found")
+                            print("-" * 70)
+                            product_object.display_information()
+                        else:
+                            print("Product Not Found.\n")
+                            
+                    # Remove Product
+                    elif option == 5:
+                        print("\nRemove Product")
+                        print("-" * 70)
+                        product_id = Main.get_user_input(str, "Enter Product ID: ")
+                        inventory.remove_product(product_id)
                             
                     # Save Inventory into JSON Database
-                    elif option == 5:
+                    elif option == 6:
                         File.save_inventory(inventory)
                         
                     # Save Inventory into JSON Database and QUIT
-                    elif option == 6:
+                    elif option == 7:
                         if File.save_inventory(inventory):
                             print("Thank you for using Inventory Management System.")
                             print("Program terminated.")
@@ -129,7 +143,7 @@ class Main():
                             if exit_without_save.lower() == "yes":
                                 break
                 else:
-                    print("Invalid option. Enter a number from 1 to 6.\n")
+                    print("Invalid option. Enter a number from 1 to 7.\n")
             except ValueError as e: # User Input Validation Failed
                 print(f"Error: {e}")
             except TypeError as e:

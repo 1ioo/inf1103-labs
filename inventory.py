@@ -4,7 +4,7 @@ from product import Product
 # Inventory Class handles Inventory Management System
 class Inventory:
     def __init__(self):
-        self.__product_list = [] # Stores Product Objects in this List
+        self.__product_list: list[Product] = [] # Stores Product Objects in this List
     
     # Getter for Product List
     @property
@@ -20,16 +20,21 @@ class Inventory:
             return False
 
     # Searches for Products
-    def search_product(self, product_id: str):
+    def search_product(self, product_id: str) -> Product | None: # return the matching Product, or None if it cannot be found
         for product_object in self.__product_list:
             if product_object.product_id == product_id:
-                print("\nProduct Found")
-                print("-" * 70)
-                product_object.display_information()
-                print()
-                break
+                return product_object
         else:
-            print("Product Not Found.\n")
+            return None
+            
+    # Remove Product
+    def remove_product(self, product_id: str):
+        for product_object in self.__product_list:
+            if product_object.product_id == product_id:
+                self.__product_list.remove(product_object)
+                print(f"{product_object.__name} removed.")
+        else:
+            print(f"{product_id} not found.")
     
     # Display all Products
     def display_all(self):
