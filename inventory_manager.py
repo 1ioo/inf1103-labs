@@ -22,7 +22,7 @@ class Main():
         print("-" * 25 + "\n")
         
     # Get User Input
-    def get_user_input(convert_type, prompt):
+    def get_user_input(convert_type, prompt: str):
         try:
             user_input = input(prompt)
             # Input Validation
