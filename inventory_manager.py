@@ -102,7 +102,7 @@ class Main():
                         for product in inventory.product_list:
                             if product.product_id == product_id:
                                 print("\nProduct Found:")
-                                product.display_information()
+                                product.display_information() # show_product_details() function was not implemented as it was already implemented in its subclasses
                                 stock_quantity = Main.get_user_input(int, "\nEnter New Stock Quantity: ")
                                 product.update_stock(stock_quantity)
                                 break
