@@ -15,23 +15,23 @@ class Product(ABC):
     
     # Getter Methods
     @property
-    def product_id(self):
+    def product_id(self) -> str:
         return self.__product_id
     
     @property
-    def product_name(self):
+    def product_name(self) -> str:
         return self.__name
     
     @property
-    def stock_quantity(self):
+    def stock_quantity(self) -> int:
         return self.__stock
     
     @property
-    def price(self):
+    def price(self) -> float:
         return self.__price
     
     # Updates Product's Stock Quantity
-    def update_stock(self, quantity: int):
+    def update_stock(self, quantity: int) -> None:
         if isinstance(quantity, int):
             self.__stock = quantity
             print("Stock Quantity Updated.\n")
@@ -39,7 +39,7 @@ class Product(ABC):
             raise ValueError("Error: Enter a Positive Integer.\n")
     
     # Displays Product Summary
-    def display_information(self):
+    def display_information(self) -> None:
         self.__supplier.display_information()
         print(f"Product ID: {self.__product_id}")
         print(f"Product Name: {self.__name}")
@@ -62,16 +62,16 @@ class PhysicalProduct(Product, CanBeShipped):
         super().__init__(product_id, name, price, stock, supplier)
         self.__weight = weight
         
-    def display_information(self):
+    def display_information(self) -> None:
         super().display_information()
         print(f"Weight: {self.__weight:.2f}KG")
         self.get_fulfillment_info()
         print(f"Shipping Fee for Each Product Costs ${self.calculate_shipping_cost():.2f}")
         
-    def get_fulfillment_info(self):
+    def get_fulfillment_info(self) -> None:
         print("The product requires physical shipping.")
         
-    def calculate_shipping_cost(self):
+    def calculate_shipping_cost(self) -> float:
         if self.__weight < 5:
             return 2.0
         else:
@@ -83,10 +83,10 @@ class DigitalProduct(Product):
         super().__init__(product_id, name, price, stock, supplier)
         self.__download_size = download_size
         
-    def display_information(self):
+    def display_information(self) -> None:
         super().display_information()
         print(f"Download Size: {self.__download_size:.2f} MB")
         self.get_fulfillment_info()
         
-    def get_fulfillment_info(self):
+    def get_fulfillment_info(self) -> None:
         print("The product is delivered digitally.")

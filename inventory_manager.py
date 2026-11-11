@@ -10,7 +10,7 @@ from orderline import OrderLine
 # Main Class handles Main Program Flow
 class Main():
     # Display Main Menu
-    def display_menu():
+    def display_menu() -> None:
         print("-" * 10 + " MENU " + "-" * 10)
         print("1. Display All Products")
         print("2. Add Product")
@@ -50,7 +50,7 @@ class Main():
             raise ValueError(e)
             
     # Main Program Flow
-    def main():
+    def main() -> None:
         inventory = File.load_inventory()
         while True:
             Main.display_menu()

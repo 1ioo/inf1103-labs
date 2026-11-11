@@ -12,7 +12,7 @@ class Inventory:
         return self.__product_list
     
     # Adds Product to Product List
-    def add_product(self, product_object: Product):
+    def add_product(self, product_object: Product) -> bool:
         if isinstance(product_object, Product):
             self.__product_list.append(product_object)
             return True
@@ -28,7 +28,7 @@ class Inventory:
             return None
             
     # Remove Product
-    def remove_product(self, product_id: str):
+    def remove_product(self, product_id: str) -> None:
         for product_object in self.__product_list:
             if product_object.product_id == product_id:
                 self.__product_list.remove(product_object)
@@ -38,7 +38,7 @@ class Inventory:
             print(f"{product_id} not found.\n")
     
     # Display all Products
-    def display_all(self):
+    def display_all(self) -> None:
         print("\nCurrent Inventory")
         print("-" * 70)
         if self.__product_list:

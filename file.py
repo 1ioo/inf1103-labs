@@ -6,7 +6,7 @@ from product import PhysicalProduct, DigitalProduct
 # File Class handles Loading and Saving of JSON Database
 class File():
     # Loads Inventory in JSON to Inventory Object
-    def load_inventory():
+    def load_inventory() -> Inventory:
         print("=" * 30)
         print("INVENTORY MANAGEMENT SYSTEM")
         print("=" * 30 + "\n")
@@ -37,7 +37,7 @@ class File():
         return inventory
     
     # Saves Inventory Object into JSON Database
-    def save_inventory(inventory: Inventory):
+    def save_inventory(inventory: Inventory) -> bool:
         try:
             inventory_dict = []
             # Convert Inventory Object to Dictionary
