@@ -1,5 +1,4 @@
 # product.py contains all relevant information about the Product class and its subclasses
-
 from abc import ABC, abstractmethod
 from supplier import Supplier
 
@@ -49,44 +48,3 @@ class Product(ABC):
     @abstractmethod
     def get_fulfillment_info(self):
         pass
-
-# Interface for Physical Products that can be shipped
-class CanBeShipped(ABC):
-    @abstractmethod
-    def calculate_shipping_cost(self):
-        pass
-
-# Child Class of Product to represent Physical Products
-class PhysicalProduct(Product, CanBeShipped):
-    def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier, weight: float):
-        super().__init__(product_id, name, price, stock, supplier)
-        self.__weight = weight
-        
-    def display_information(self) -> None:
-        super().display_information()
-        print(f"Weight: {self.__weight:.2f}KG")
-        self.get_fulfillment_info()
-        print(f"Shipping Fee for Each Product Costs ${self.calculate_shipping_cost():.2f}")
-        
-    def get_fulfillment_info(self) -> None:
-        print("The product requires physical shipping.")
-        
-    def calculate_shipping_cost(self) -> float:
-        if self.__weight < 5:
-            return 2.0
-        else:
-            return 4.0
-
-# Child Class of Product to represent Digital Products        
-class DigitalProduct(Product):
-    def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier, download_size: float):
-        super().__init__(product_id, name, price, stock, supplier)
-        self.__download_size = download_size
-        
-    def display_information(self) -> None:
-        super().display_information()
-        print(f"Download Size: {self.__download_size:.2f} MB")
-        self.get_fulfillment_info()
-        
-    def get_fulfillment_info(self) -> None:
-        print("The product is delivered digitally.")

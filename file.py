@@ -1,7 +1,8 @@
 # file.py contains all relevant information about the File class
 import json
 from inventory import Inventory
-from product import PhysicalProduct, DigitalProduct
+from physicalproduct import PhysicalProduct
+from digitalproduct import DigitalProduct
         
 # File Class handles Loading and Saving of JSON Database
 class File():

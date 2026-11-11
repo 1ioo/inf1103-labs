@@ -1,11 +1,10 @@
 # inventory_manager.py contains the Main class which executes the main program flow
 
 from file import File
-from inventory import Inventory
-from product import PhysicalProduct, DigitalProduct
+from physicalproduct import PhysicalProduct
+from digitalproduct import DigitalProduct
 from supplier import Supplier
 from order import Order
-from orderline import OrderLine
         
 # Main Class handles Main Program Flow
 class Main():
