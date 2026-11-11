@@ -4,6 +4,8 @@ from file import File
 from inventory import Inventory
 from product import PhysicalProduct, DigitalProduct
 from supplier import Supplier
+from order import Order
+from orderline import OrderLine
         
 # Main Class handles Main Program Flow
 class Main():
@@ -15,8 +17,9 @@ class Main():
         print("3. Update Stock")
         print("4. Search Product")
         print("5. Remove Product")
-        print("6. Save Inventory")
-        print("7. Exit")
+        print("6. View Orders")
+        print("7. Save Inventory")
+        print("8. Exit")
         print("-" * 25 + "\n")
         
     # Get User Input
@@ -49,11 +52,11 @@ class Main():
     # Main Program Flow
     def main():
         inventory = File.load_inventory()
-        Main.display_menu()
         while True:
+            Main.display_menu()
             try:
                 option = Main.get_user_input(int, "Enter Option: ")
-                if 1 <= option <= 7:
+                if 1 <= option <= 8:
                     # Display All Products
                     if option == 1:
                         inventory.display_all()
@@ -128,12 +131,42 @@ class Main():
                         product_id = Main.get_user_input(str, "Enter Product ID: ")
                         inventory.remove_product(product_id)
                             
+                    elif option == 6: # Order Test Implementation
+                        print("\nView Orders")
+                        print("-" * 70)
+                        
+                        # Create an Order
+                        order = Order("O001")
+                        
+                        # Add Two or More Products to Order
+                        product1 = inventory.search_product("P001")
+                        product2 = inventory.search_product("P002")
+                        order.add_order_line(product1, 2)
+                        order.add_order_line(product2, 4)
+                        
+                        # Display Each Order Line and calculate the order total
+                        order.display_order_lines()
+                        print(f"Order Total: ${order.calculate_total():.2f}\n")
+                        
+                        # Add a same product to a different order
+                        order2 = Order("O002")
+                        order2.add_order_line(product1, 5)
+                        
+                        # Remove Order Line
+                        order.remove_order_line("P001")
+                        
+                        # Display Order Lines
+                        print("Order1 Order Lines: ")
+                        order.display_order_lines()
+                        print("Order2 Order Lines: ")
+                        order2.display_order_lines()
+                            
                     # Save Inventory into JSON Database
-                    elif option == 6:
+                    elif option == 7:
                         File.save_inventory(inventory)
                         
                     # Save Inventory into JSON Database and QUIT
-                    elif option == 7:
+                    elif option == 8:
                         if File.save_inventory(inventory):
                             print("Thank you for using Inventory Management System.")
                             print("Program terminated.")
@@ -144,7 +177,7 @@ class Main():
                             if exit_without_save.lower() == "yes":
                                 break
                 else:
-                    print("Invalid option. Enter a number from 1 to 7.\n")
+                    print("Invalid option. Enter a number from 1 to 8.\n")
             except ValueError as e: # User Input Validation Failed
                 print(f"Error: {e}")
             except TypeError as e:
